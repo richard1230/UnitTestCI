@@ -1,7 +1,7 @@
-package declareNumbersOfPrimitiveTypes;
+package com.github.UnitTestPractice.declareNumbersOfPrimitiveTypes;
 
-        import org.junit.jupiter.api.Assertions;
-        import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 class MaxNumbersTest {

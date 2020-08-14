@@ -7,7 +7,7 @@ public class fixDivdeBug {
     // 不要修改方法的参数类型
     public static double divide(int a, int b) {
 
-        return (float)a/b;
+        return (float) a / b;
     }
 
     public static void main(String[] args) {

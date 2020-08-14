@@ -1,4 +1,4 @@
-package createAnEmptyClass;
+package com.github.UnitTestPractice.createAnEmptyClass;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package collection;
+package com.github.UnitTestPractice.collection;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
