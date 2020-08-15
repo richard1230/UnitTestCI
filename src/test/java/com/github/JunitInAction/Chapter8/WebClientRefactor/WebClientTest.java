@@ -2,7 +2,6 @@ package com.github.JunitInAction.Chapter8.WebClientRefactor;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
