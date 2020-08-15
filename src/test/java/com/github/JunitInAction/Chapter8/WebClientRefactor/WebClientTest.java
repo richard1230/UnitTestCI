@@ -11,11 +11,14 @@ class WebClientTest {
     public void testGetContentOk() throws Exception {
         MockConnectionFactory mockConnectionFactory =
                 new MockConnectionFactory();
-        mockConnectionFactory.setData(
-                new ByteArrayInputStream("It works".getBytes()));
 
+        MockInputStream mockStream = new MockInputStream();
+        mockStream.setBuffer("It works");
+        mockConnectionFactory.setData(mockStream);
         WebClient client = new WebClient();
         String workingContent = client.getContent(mockConnectionFactory);
+
         assertEquals("It works", workingContent);
+        mockStream.verify();
     }
 }
