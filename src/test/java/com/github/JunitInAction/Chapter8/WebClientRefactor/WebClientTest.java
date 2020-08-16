@@ -1,87 +1,56 @@
 package com.github.JunitInAction.Chapter8.WebClientRefactor;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.junit5.JUnit5Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class WebClientTest {
-    //TestWebClientJMock
-    @RegisterExtension
-    Mockery context = new JUnit5Mockery()
-    {
-        {
-            setImposteriser( ClassImposteriser.INSTANCE );
-        }
-    };
+    @Mock
+    private ConnectionFactory factory;
+
+    @Mock
+    private InputStream mockStream;
 
     @Test
-    public void testGetContentOk() throws Exception
-    {
-        ConnectionFactory factory =
-                context.mock( ConnectionFactory.class );
-        InputStream mockStream =
-                context.mock( InputStream.class );
-
-        context.checking( new Expectations()
-        {
-            {
-                oneOf( factory ).getData();
-                will( returnValue( mockStream ) );
-
-                atLeast( 1 ).of( mockStream ).read();
-                will( onConsecutiveCalls(
-                        returnValue( Integer.valueOf ( (byte) 'W' ) ),
-                        returnValue( Integer.valueOf ( (byte) 'o' ) ),
-                        returnValue( Integer.valueOf ( (byte) 'r' ) ),
-                        returnValue( Integer.valueOf ( (byte) 'k' ) ),
-                        returnValue( Integer.valueOf ( (byte) 's' ) ),
-                        returnValue( Integer.valueOf ( (byte) '!' ) ),
-                        returnValue( -1 ) ) );
-
-                oneOf( mockStream ).close();
-            }
-        } );
+    public void testGetContentOk() throws Exception {
+        when(factory.getData()).thenReturn(mockStream);
+        when(mockStream.read()).thenReturn((int) 'W')
+                .thenReturn((int) 'o')
+                .thenReturn((int) 'r')
+                .thenReturn((int) 'k')
+                .thenReturn((int) 's')
+                .thenReturn((int) '!')
+                .thenReturn(-1);
 
         WebClient client = new WebClient();
-        String workingContent = client.getContent( factory );
 
-        assertEquals( "Works!", workingContent );
+        String workingContent = client.getContent(factory);
+
+        assertEquals("Works!", workingContent);
     }
 
     @Test
-    public void testGetContentCannotCloseInputStream() throws Exception
-    {
-
-        ConnectionFactory factory =
-                context.mock( ConnectionFactory.class );
-        InputStream mockStream = context.mock( InputStream.class );
-
-        context.checking( new Expectations()
-        {
-            {
-                oneOf( factory ).getData();
-                will( returnValue( mockStream ) );
-                oneOf( mockStream ).read();
-                will( returnValue( -1 ) );
-                oneOf( mockStream ).close();
-                will( throwException(
-                        new IOException( "cannot close" ) )  );
-            }
-        } );
+    public void testGetContentCannotCloseInputStream()
+            throws Exception {
+        when(factory.getData()).thenReturn(mockStream);
+        when(mockStream.read()).thenReturn(-1);
+        doThrow(new IOException("cannot close"))
+                .when(mockStream).close();
 
         WebClient client = new WebClient();
 
-        String workingContent = client.getContent( factory );
+        String workingContent = client.getContent(factory);
 
-        assertNull( workingContent );
+        assertNull(workingContent);
     }
 }
